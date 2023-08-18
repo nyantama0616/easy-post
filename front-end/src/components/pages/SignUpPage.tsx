@@ -1,6 +1,7 @@
 import React from "react";
 import { Stack, TextField, Button } from "@mui/material"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import { useHttpRequest } from "../../hooks/useHttpRequest";
 
 type FormData = {
     eMail: string;
@@ -29,8 +30,21 @@ export default function SignUpPage() {
         }
     };
 
+    const hr = useHttpRequest();
     const onSubmit: SubmitHandler<FormData> = (data: FormData) => {
         console.log(`eMail: ${data.eMail}\npassword: ${data.password}`);
+        const params = {
+            e_mail: data.eMail,
+            password: data.password
+        }
+        hr.post("/users", params)
+            .then(r => {
+                console.log(r.status);
+            })
+            .catch(e => {
+                console.log(e);
+                
+            });
     }
 
     return (
