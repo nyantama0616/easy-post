@@ -4,8 +4,9 @@ class UsersController < ApplicationController
     end
 
     def create
+        # logger.debug(user_parms)
         begin
-            user = User.create!(encrypt(user_parms))
+            user = User.create!(user_parms)
             render status: :created
         rescue => e
             logger.debug(e)
@@ -16,10 +17,6 @@ class UsersController < ApplicationController
     private
 
     def user_parms
-        params.require(:user).permit(:e_mail, :password)
-    end
-
-    def encrypt(user)
-        user
+        params.require(:user).permit(:e_mail, :password, :password_confirmation)
     end
 end

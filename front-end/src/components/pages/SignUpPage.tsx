@@ -6,6 +6,7 @@ import { useHttpRequest } from "../../hooks/useHttpRequest";
 type FormData = {
     eMail: string;
     password: string;
+    passwordConfirmation: string;
 };
 export default function SignUpPage() {
     const {
@@ -13,7 +14,7 @@ export default function SignUpPage() {
         handleSubmit,
         formState: { errors }
     } = useForm<FormData>({
-        defaultValues: { eMail: "", password: "" }
+        defaultValues: { eMail: "", password: "", passwordConfirmation: "" }
     });
 
     const validationRules = {
@@ -24,26 +25,34 @@ export default function SignUpPage() {
                 message: "メールアドレスの形式が無効です"
             }
         },
+        
         password: {
             required: "パスワードを入力してください",
             minLength: { value: 4, message: "4文字以上のパスワードを設定してください" }
+        },
+        
+        passwordConfirmation: {
+            required: "パスワードをもう一度入力してください",
         }
     };
 
     const hr = useHttpRequest();
     const onSubmit: SubmitHandler<FormData> = (data: FormData) => {
-        console.log(`eMail: ${data.eMail}\npassword: ${data.password}`);
         const params = {
-            e_mail: data.eMail,
-            password: data.password
-        }
+            user: {
+                e_mail: data.eMail,
+                password: data.password,
+                password_confirmation: data.passwordConfirmation
+            }
+        };
+        
         hr.post("/users", params)
             .then(r => {
                 console.log(r.status);
             })
             .catch(e => {
                 console.log(e);
-                
+                console.log(e.response.data);
             });
     }
 
@@ -79,6 +88,20 @@ export default function SignUpPage() {
                             label="Password"
                             error={errors.password !== undefined}
                             helperText={errors.password?.message}
+                        />
+                    )}
+                />
+                <Controller
+                    name="passwordConfirmation"
+                    control={control}
+                    rules={validationRules.passwordConfirmation}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            type="password"
+                            label="Password"
+                            error={errors.passwordConfirmation !== undefined}
+                            helperText={errors.passwordConfirmation?.message}
                         />
                     )}
                 />
