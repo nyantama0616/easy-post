@@ -1,7 +1,6 @@
 import React from "react";
-import { Stack, TextField, Button } from "@mui/material"
-import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import { useHttpRequest } from "../../hooks/useHttpRequest";
+import Form from "../organisms/Form";
 
 type FormData = {
     eMail: string;
@@ -9,14 +8,6 @@ type FormData = {
     passwordConfirmation: string;
 };
 export default function SignUpPage() {
-    const {
-        control,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<FormData>({
-        defaultValues: { eMail: "", password: "", passwordConfirmation: "" }
-    });
-
     const validationRules = {
         eMail: {
             required: "メールアドレスを入力してください",
@@ -37,7 +28,7 @@ export default function SignUpPage() {
     };
 
     const hr = useHttpRequest();
-    const onSubmit: SubmitHandler<FormData> = (data: FormData) => {
+    const onSubmit = (data: FormData) => {
         const params = {
             user: {
                 e_mail: data.eMail,
@@ -45,7 +36,7 @@ export default function SignUpPage() {
                 password_confirmation: data.passwordConfirmation
             }
         };
-        
+
         hr.post("/users", params)
             .then(r => {
                 console.log(r.status);
@@ -56,59 +47,33 @@ export default function SignUpPage() {
             });
     }
 
+    const targets = [
+        {
+            name: "eMail",
+            type: "text",
+            label: "E-mail"
+        },
+        {
+            name: "password",
+            type: "password",
+            label: "Password"
+        },
+        {
+            name: "passwordConfirmation",
+            type: "password",
+            label: "Password confirmation"
+        },
+    ]
+
     return (
         <div className="sign-up-page">
             <h1>sign up</h1>
-            <Stack component="form" noValidate
-                onSubmit={handleSubmit(onSubmit)}
-                spacing={2} sx={{ m: 2, width: "25ch" }}>
-
-                <Controller
-                    name="eMail"
-                    control={control}
-                    rules={validationRules.eMail}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            type="text"
-                            label="E-mail"
-                            error={errors.eMail !== undefined}
-                            helperText={errors.eMail?.message}
-                        />
-                    )}
-                />
-                <Controller
-                    name="password"
-                    control={control}
-                    rules={validationRules.password}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            type="password"
-                            label="Password"
-                            error={errors.password !== undefined}
-                            helperText={errors.password?.message}
-                        />
-                    )}
-                />
-                <Controller
-                    name="passwordConfirmation"
-                    control={control}
-                    rules={validationRules.passwordConfirmation}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            type="password"
-                            label="Password"
-                            error={errors.passwordConfirmation !== undefined}
-                            helperText={errors.passwordConfirmation?.message}
-                        />
-                    )}
-                />
-                <Button variant="contained" type="submit">
-                    送信する
-                </Button>
-            </Stack>
+            <Form
+                onSubmit={onSubmit}
+                targets={targets}
+                validationRules={validationRules}
+                submitButtonValue="サインイン"
+            />
         </div>
     )
 }
