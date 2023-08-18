@@ -67,12 +67,11 @@ export default function SignUpPage() {
 
     return (
         <div className="sign-up-page">
-            <h1>sign up</h1>
             <Form
                 onSubmit={onSubmit}
                 targets={targets}
                 validationRules={validationRules}
-                submitButtonValue="サインイン"
+                submitButtonValue="サインアップ"
             />
         </div>
     )

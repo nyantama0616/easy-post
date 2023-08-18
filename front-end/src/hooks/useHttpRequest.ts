@@ -5,10 +5,6 @@ interface IHttpRequestManager {
     get: (path: string) => Promise<AxiosResponse<any, any>>
 }
 
-// type PostParams = {
-//     e_mail: string
-//     password: string
-// };
 type PostParams = { [key: symbol]: any };
 class HttpRequestManager implements IHttpRequestManager {
     private static BASE_URL = "http://localhost:3001/";
